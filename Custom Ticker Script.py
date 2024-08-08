@@ -60,9 +60,23 @@ plt.ylabel('Price')
 plt.xlabel('Date')
 ax.plot(data.index, data['Close'], label = 'Close Price', color = 'black', linewidth = 1.5)
 ax.plot(data['UpperBand'], label = 'Upper Band', alpha = 0.25, color = 'green', linewidth = 1)
-ax.plot(data['LowerBand'], label = 'Lower Band', alpha = 0.25, color = 'red', linewidth = 1)e
+ax.plot(data['LowerBand'], label = 'Lower Band', alpha = 0.25, color = 'red', linewidth = 1)
 ax.fill_between(data.index, data['UpperBand'], data['LowerBand'], alpha = 0.1, color = 'yellow')
 ax.scatter(data.index, data['Buy'], label = 'Buy', color = 'green', alpha = 1, marker = '^', linewidth = 2)
 ax.scatter(data.index, data['Sell'], label = 'Sell', color = 'red', alpha = 1, marker = 'v', linewidth = 2)
 ax.legend()
 plt.show()
+
+buy_signals = data[data['Buy'] > 0].index
+sell_signals = data[data['Sell'] > 0].index
+# Calculate returns for each trade
+returns = []
+for buy, sell in zip(buy_signals, sell_signals):
+    buy_price = data.loc[buy, 'Close']
+    sell_price = data.loc[sell, 'Close']
+    trade_return = (sell_price - buy_price) / buy_price
+    returns.append(trade_return)
+
+# Calculate final return
+final_return = round(sum(returns) * 100, 3) 
+print("Final Return: " + str(final_return) + "%")
