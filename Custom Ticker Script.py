@@ -3,6 +3,8 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
 import yfinance as yf
+import warnings
+warnings.filterwarnings('ignore')
 plt.style.use('fivethirtyeight')
 
 def bollinger_bands(data, window_size = 30): #Bollinger Bands Function
@@ -77,6 +79,15 @@ for buy, sell in zip(buy_signals, sell_signals):
     trade_return = (sell_price - buy_price) / buy_price
     returns.append(trade_return)
 
-# Calculate final return
-final_return = round(sum(returns) * 100, 3) 
-print("Final Return: " + str(final_return) + "%")
+# Calculate cumulative return
+cumulative_return = np.prod([1 + r for r in returns]) - 1
+cumulative_return_percentage = round(cumulative_return * 100, 2)
+print("Cumulative Return: " + str(cumulative_return_percentage) + "%")
+
+# Calculate total number of days in the dataset
+total_days = (data.index[-1] - data.index[0]).days
+
+# Calculate annualized return
+annualized_return = (1 + cumulative_return) ** (365 / total_days) - 1
+annualized_return_percentage = round(annualized_return * 100, 2)
+print("Annualized Return: " + str(annualized_return_percentage) + "%")
